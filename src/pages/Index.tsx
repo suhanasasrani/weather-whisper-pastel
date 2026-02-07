@@ -1,4 +1,4 @@
-import { WeatherDashboard } from '@/components/WeatherDashboard';
+import { WeatherDashboard } from '../components/WeatherDashboard';
 
 const Index = () => {
   return <WeatherDashboard />;
