@@ -1,341 +1,90 @@
 'use client';
 
-import { TabsContent } from "@/components/ui/tabs";
-import { TabsTrigger } from "@/components/ui/tabs";
-import { TabsList } from "@/components/ui/tabs";
-import { Tabs } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { CardContent } from "@/components/ui/card";
-import { CardTitle } from "@/components/ui/card";
-import { CardHeader } from "@/components/ui/card";
-import { Card } from "@/components/ui/card";
-import React from "react";
+import React from "react"
 import { useState, useEffect } from 'react';
-import { useWeatherData } from "@/hooks/useWeatherData";
-import { toast } from "@/components/ui/toast";
-import { getWeatherGradient } from "@/utils/getWeatherGradient";
-import { DarkModeToggle } from "@/components/DarkModeToggle";
-import { getWeatherEmoji } from "@/utils/getWeatherEmoji";
-import { getAirQualityInfo } from "@/utils/getAirQualityInfo";
-import { formatTime } from "@/utils/formatTime";
-import { WeatherAlertBanner } from "@/components/WeatherAlertBanner";
-import { HazardAlerts } from "@/components/HazardAlerts";
-import { WeatherChart } from "@/components/WeatherChart";
-import { FunFacts } from "@/components/FunFacts";
-import { formatDate } from "@/utils/formatDate";
-
-const DEFAULT_CITY = 'London';
-const LAST_CITY_KEY = 'weather_last_city';
 
 export const WeatherDashboard = () => {
-  const { weatherData, historicalData, loading, error, fetchWeatherData } = useWeatherData();
-  const [city, setCity] = useState('');
-  const [searchCity, setSearchCity] = useState('');
+  const [city, setCity] = useState('London');
+  const [weather, setWeather] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
 
-  // Load last city from localStorage or use default on mount
   useEffect(() => {
-    const lastCity = localStorage.getItem(LAST_CITY_KEY) || DEFAULT_CITY;
-    setCity(lastCity);
-    setSearchCity(lastCity);
-    fetchWeatherData(lastCity);
-  }, [fetchWeatherData]);
-
-  const handleSearch = async () => {
-    if (!searchCity.trim()) {
-      toast({
-        title: "Please enter a city name",
-        description: "Enter a valid city name to get weather information",
-        variant: "destructive"
+    setLoading(true);
+    setTimeout(() => {
+      setWeather({
+        temp: 22,
+        description: 'Partly Cloudy',
+        humidity: 65,
+        windSpeed: 12,
+        feelsLike: 20
       });
-      return;
-    }
-    
-    const trimmedCity = searchCity.trim();
-    setCity(trimmedCity);
-    localStorage.setItem(LAST_CITY_KEY, trimmedCity);
-    await fetchWeatherData(trimmedCity);
-    
-    if (error) {
-      toast({
-        title: "Error fetching weather",
-        description: error,
-        variant: "destructive"
-      });
-    }
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleSearch();
-    }
-  };
+      setLoading(false);
+    }, 500);
+  }, []);
 
   return (
-    <div className={`min-h-screen ${weatherData ? getWeatherGradient(weatherData.current.weather[0]?.main || 'clear') : 'weather-gradient-sky'}`}>
-      <DarkModeToggle />
-      
-      <div className="container mx-auto p-4 space-y-6">
-        {/* Header */}
-        <Card className="glass-card">
-          <CardHeader>
-            <div className="flex items-center space-x-4">
-              <div className="text-3xl">🌤️</div>
-              <div>
-                <CardTitle className="text-xl">Weather Whisper</CardTitle>
-                <p className="text-sm text-muted-foreground">
-                  Your beautiful weather companion ✨
-                </p>
+    <div className="min-h-screen bg-gradient-to-br from-blue-400 via-blue-300 to-purple-300 p-4">
+      <div className="max-w-4xl mx-auto space-y-6">
+        <div className="bg-white/20 backdrop-blur-md rounded-lg p-6 text-white">
+          <div className="flex items-center space-x-3">
+            <span className="text-5xl">🌤️</span>
+            <div>
+              <h1 className="text-3xl font-bold">Weather Whisper</h1>
+              <p className="text-sm opacity-90">Your beautiful weather companion</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white/20 backdrop-blur-md rounded-lg p-4 text-white">
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              placeholder="Enter city name..."
+              className="flex-1 px-4 py-2 rounded-lg bg-white/30 text-white placeholder-white/70 focus:outline-none"
+            />
+            <button className="px-6 py-2 rounded-lg bg-white/30 hover:bg-white/40 transition">
+              Search
+            </button>
+          </div>
+        </div>
+
+        {!loading && weather && (
+          <div className="bg-white/20 backdrop-blur-md rounded-lg p-8 text-white">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="text-center space-y-4">
+                <div className="text-8xl">🌤️</div>
+                <div>
+                  <div className="text-5xl font-bold">{weather.temp}°C</div>
+                  <div className="text-lg opacity-90">Feels like {weather.feelsLike}°C</div>
+                  <div className="text-2xl mt-2">{weather.description}</div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-white/10 rounded-lg p-4">
+                  <div className="text-sm opacity-75 mb-2">Humidity</div>
+                  <div className="text-3xl font-bold">{weather.humidity}%</div>
+                </div>
+                <div className="bg-white/10 rounded-lg p-4">
+                  <div className="text-sm opacity-75 mb-2">Wind Speed</div>
+                  <div className="text-3xl font-bold">{weather.windSpeed} km/h</div>
+                </div>
+                <div className="bg-white/10 rounded-lg p-4 col-span-2">
+                  <div className="text-sm opacity-75 mb-2">Location</div>
+                  <div className="text-2xl font-bold">{city}</div>
+                </div>
               </div>
             </div>
-          </CardHeader>
-        </Card>
-
-        {/* Search */}
-        <Card className="glass-card">
-          <CardContent className="p-4">
-            <div className="flex space-x-2">
-              <Input
-                placeholder="Enter city name (e.g., London, New York, Tokyo)"
-                value={searchCity}
-                onChange={(e) => setSearchCity(e.target.value)}
-                onKeyPress={handleKeyPress}
-                className="flex-1"
-                disabled={loading}
-              />
-              <Button 
-                onClick={handleSearch}
-                disabled={loading || !searchCity.trim()}
-              >
-                {loading ? '🔄' : '🔍'} Search
-              </Button>
-            </div>
-            
-            {city && (
-              <div className="mt-2 text-sm text-muted-foreground">
-                📍 Showing weather for: <span className="font-medium">{city}</span>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {error && (
-          <Card className="glass-card border-destructive">
-            <CardContent className="p-4">
-              <div className="flex items-center space-x-2 text-destructive">
-                <span>⚠️</span>
-                <span>Error: {error}</span>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {loading && (
-          <Card className="glass-card">
-            <CardContent className="p-8 text-center">
-              <div className="space-y-4">
-                <div className="text-4xl animate-pulse-slow">🌤️</div>
-                <div className="text-lg font-medium">Fetching weather data...</div>
-                <div className="text-sm text-muted-foreground">
-                  Getting the latest forecast for {searchCity}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {weatherData && (
-          <div className="space-y-6 animate-fade-in">
-            {/* Current Weather */}
-            <Card className="glass-card">
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <span>📍</span>
-                    <span>{weatherData.location.name}, {weatherData.location.country}</span>
-                  </div>
-                  <Badge variant="secondary">
-                    {new Date().toLocaleDateString([], { 
-                      weekday: 'long',
-                      month: 'short', 
-                      day: 'numeric' 
-                    })}
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* Main weather display */}
-                  <div className="text-center space-y-4">
-                    <div className="text-8xl animate-float">
-                      {getWeatherEmoji(weatherData.current.weather[0].main, weatherData.current.weather[0].icon)}
-                    </div>
-                    <div>
-                      <div className="text-5xl font-bold text-primary">
-                        {Math.round(weatherData.current.temp)}°C
-                      </div>
-                      <div className="text-lg text-muted-foreground">
-                        Feels like {Math.round(weatherData.current.feels_like)}°C
-                      </div>
-                      <div className="text-xl capitalize mt-2">
-                        {weatherData.current.weather[0].description}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Weather details */}
-                  <div className="grid grid-cols-2 gap-4">
-                    {(() => {
-                      const airQuality = getAirQualityInfo(weatherData.current.humidity, weatherData.current.wind_speed);
-                      return (
-                        <div className="bg-muted/30 rounded-lg p-4 col-span-2">
-                          <div className="flex items-center space-x-2 mb-2">
-                            <span>🌬️</span>
-                            <span className="text-sm text-muted-foreground">Air Quality</span>
-                            <Badge variant={airQuality.level === 'Good' ? 'secondary' : airQuality.level === 'Moderate' ? 'outline' : 'destructive'} className="ml-auto">
-                              {airQuality.level}
-                            </Badge>
-                          </div>
-                          <div className="text-lg font-bold text-primary">{airQuality.index} AQI</div>
-                          <div className="text-sm text-muted-foreground mt-1">{airQuality.description}</div>
-                        </div>
-                      );
-                    })()}
-
-                    <div className="bg-muted/30 rounded-lg p-4">
-                      <div className="flex items-center space-x-2 mb-2">
-                        <span>🌅</span>
-                        <span className="text-sm text-muted-foreground">Sunrise</span>
-                      </div>
-                      <div className="text-lg font-bold">{formatTime(weatherData.current.sunrise)}</div>
-                    </div>
-
-                    <div className="bg-muted/30 rounded-lg p-4">
-                      <div className="flex items-center space-x-2 mb-2">
-                        <span>🌇</span>
-                        <span className="text-sm text-muted-foreground">Sunset</span>
-                      </div>
-                      <div className="text-lg font-bold">{formatTime(weatherData.current.sunset)}</div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Smart Weather Alerts */}
-            <Card className="glass-card">
-              <CardContent className="p-4">
-                <WeatherAlertBanner weatherData={weatherData} />
-              </CardContent>
-            </Card>
-
-            {/* Hourly & Daily Forecast */}
-            <Card className="glass-card">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <span>⏰</span>
-                  <span>Hourly Forecast</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex space-x-4 overflow-x-auto pb-2">
-                  {weatherData.hourly.slice(0, 12).map((hour, index) => (
-                    <div
-                      key={index}
-                      className="flex-shrink-0 text-center p-3 bg-muted/30 rounded-lg min-w-[100px] animate-fade-in"
-                      style={{ animationDelay: `${index * 0.1}s` }}
-                    >
-                      <div className="text-sm text-muted-foreground mb-2">
-                        {formatTime(hour.dt)}
-                      </div>
-                      <div className="text-2xl mb-2">
-                        {getWeatherEmoji(hour.weather[0].main, hour.weather[0].icon)}
-                      </div>
-                      <div className="font-bold">{Math.round(hour.temp)}°</div>
-                      <div className="text-xs text-primary mt-1">
-                        {Math.round(hour.pop * 100)}%
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="glass-card">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <span>📅</span>
-                  <span>7-Day Forecast</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {weatherData.daily.map((day, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between p-3 bg-muted/30 rounded-lg animate-fade-in"
-                      style={{ animationDelay: `${index * 0.1}s` }}
-                    >
-                      <div className="flex items-center space-x-4">
-                        <div className="text-2xl">
-                          {getWeatherEmoji(day.weather[0].main, day.weather[0].icon)}
-                        </div>
-                        <div>
-                          <div className="font-medium">{formatDate(day.dt)}</div>
-                          <div className="text-sm text-muted-foreground capitalize">
-                            {day.weather[0].description}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="font-bold">
-                          {Math.round(day.temp.max)}° / {Math.round(day.temp.min)}°
-                        </div>
-                        <div className="text-sm text-primary">
-                          {Math.round(day.pop * 100)}% rain
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Tabbed Sections */}
-            <Tabs defaultValue="alerts" className="space-y-4">
-              <TabsList className="grid w-full grid-cols-3 glass-card">
-                <TabsTrigger value="alerts">⚠️ Alerts</TabsTrigger>
-                <TabsTrigger value="charts">📊 Charts</TabsTrigger>
-                <TabsTrigger value="facts">🎉 Fun Facts</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="alerts">
-                <HazardAlerts alerts={weatherData.alerts || []} />
-              </TabsContent>
-
-              <TabsContent value="charts">
-                <WeatherChart weatherData={weatherData} />
-              </TabsContent>
-
-              <TabsContent value="facts">
-                <FunFacts weatherData={weatherData} historicalData={historicalData} />
-              </TabsContent>
-            </Tabs>
-
           </div>
         )}
 
-        {!weatherData && !loading && !error && (
-          <Card className="glass-card">
-            <CardContent className="p-8 text-center space-y-4">
-              <div className="text-6xl animate-float">🌍</div>
-              <div className="text-xl font-medium">Ready to explore the weather?</div>
-              <div className="text-muted-foreground">
-                Search for any city to see its beautiful forecast, alerts, and fun weather facts!
-              </div>
-            </CardContent>
-          </Card>
+        {loading && (
+          <div className="bg-white/20 backdrop-blur-md rounded-lg p-8 text-center text-white">
+            <div className="text-5xl mb-4">🌤️</div>
+            <div className="text-xl">Loading weather data...</div>
+          </div>
         )}
       </div>
     </div>
