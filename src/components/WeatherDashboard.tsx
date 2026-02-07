@@ -1,21 +1,30 @@
 'use client';
 
-import React from "react"
-
+import { TabsContent } from "@/components/ui/tabs";
+import { TabsTrigger } from "@/components/ui/tabs";
+import { TabsList } from "@/components/ui/tabs";
+import { Tabs } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { CardContent } from "@/components/ui/card";
+import { CardTitle } from "@/components/ui/card";
+import { CardHeader } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
+import React from "react";
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useWeatherData } from '../hooks/useWeatherData';
-import { WeatherChart } from './WeatherChart';
-import { HazardAlerts } from './HazardAlerts';
-import { FunFacts } from './FunFacts';
-import { DarkModeToggle } from './DarkModeToggle';
-import { WeatherAlertBanner } from './WeatherAlertBanner';
-import { getWeatherEmoji, formatTime, formatDate, getWeatherGradient, getAirQualityInfo } from '../utils/weatherUtils';
-import { toast } from '@/hooks/use-toast';
+import { useWeatherData } from "@/hooks/useWeatherData";
+import { toast } from "@/components/ui/toast";
+import { getWeatherGradient } from "@/utils/getWeatherGradient";
+import { DarkModeToggle } from "@/components/DarkModeToggle";
+import { getWeatherEmoji } from "@/utils/getWeatherEmoji";
+import { getAirQualityInfo } from "@/utils/getAirQualityInfo";
+import { formatTime } from "@/utils/formatTime";
+import { WeatherAlertBanner } from "@/components/WeatherAlertBanner";
+import { HazardAlerts } from "@/components/HazardAlerts";
+import { WeatherChart } from "@/components/WeatherChart";
+import { FunFacts } from "@/components/FunFacts";
+import { formatDate } from "@/utils/formatDate";
 
 const DEFAULT_CITY = 'London';
 const LAST_CITY_KEY = 'weather_last_city';
