@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect } from 'react';
 import { WeatherData, HistoricalWeather } from '../types/weather';
 import { API_KEYS } from '../utils/weatherUtils';

@@ -1,3 +1,7 @@
+'use client';
+
+import React from "react"
+
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -27,7 +31,7 @@ export const WeatherDashboard = () => {
     setCity(lastCity);
     setSearchCity(lastCity);
     fetchWeatherData(lastCity);
-  }, []);
+  }, [fetchWeatherData]);
 
   const handleSearch = async () => {
     if (!searchCity.trim()) {
