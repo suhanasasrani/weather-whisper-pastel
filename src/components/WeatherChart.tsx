@@ -11,8 +11,8 @@ import {
   Filler
 } from 'chart.js';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { WeatherData } from '../types/weather';
-import { formatTime } from '../utils/weatherUtils';
+import { WeatherData } from '@/types/weather';
+import { formatTime } from '@/utils/weatherUtils';
 
 ChartJS.register(
   CategoryScale,

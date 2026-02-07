@@ -1,6 +1,6 @@
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { WeatherData } from '../types/weather';
+import { WeatherData } from '@/types/weather';
 
 interface WeatherAlertBannerProps {
   weatherData: WeatherData;
